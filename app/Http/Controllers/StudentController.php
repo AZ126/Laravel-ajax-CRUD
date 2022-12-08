@@ -24,7 +24,7 @@ class StudentController extends Controller
     {
         $students = Student::all();
         return response()->json([
-            'students'=>$students,
+            'students' => $students,
         ]);
     }
 
@@ -42,7 +42,7 @@ class StudentController extends Controller
     {
         return view('student.index');
     }
-    
+
 
     /**
      * Store a newly created resource in storage.
@@ -64,7 +64,7 @@ class StudentController extends Controller
                 'status' => 400,
                 'errors' => $validator->messages(),
             ]);
-        } else{
+        } else {
             $students = new Student();
             $students->name = $request->input('name');
             $students->email = $request->input('email');
@@ -73,13 +73,11 @@ class StudentController extends Controller
 
             $students->save();
             return response()->json([
-                'status'=>200,
-                'message'=>'Student Added Successfully.'
+                'status' => 200,
+                'message' => 'Student Added Successfully.'
 
             ]);
         }
-
-
     }
 
     /**
@@ -99,9 +97,20 @@ class StudentController extends Controller
      * @param  \App\Models\Student  $student
      * @return \Illuminate\Http\Response
      */
-    public function edit(Student $student)
+    public function edit(Student $student, $id)
     {
-        //
+        $studentData = Student::find($id);
+        if ($studentData) {
+            return response()->json([
+                'ststus' => 200,
+                'student' => $studentData,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Student not found'
+            ]);
+        }
     }
 
     /**
@@ -111,9 +120,41 @@ class StudentController extends Controller
      * @param  \App\Models\Student  $student
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Student $student)
+    public function update(Request $request, Student $student, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required',
+            'course' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->messages(),
+            ]);
+        } else {
+            $student = Student::find($id);
+            if ($student) {
+                $student->name = $request->input('name');
+                $student->email = $request->input('email');
+                $student->phone = $request->input('phone');
+                $student->course = $request->input('course');
+
+                $student->update();
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Student Updated Successfully.'
+
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Student not found'
+                ]);
+            }
+        }
     }
 
     /**
@@ -122,8 +163,13 @@ class StudentController extends Controller
      * @param  \App\Models\Student  $student
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Student $student)
+    public function destroy(Student $student, $id)
     {
-        //
+        $student = Student::find($id);
+        $student->delete();
+        return response()->json([
+            'status'=>200,
+            'message'=>'Student Deleted Successfully'
+        ]);
     }
 }

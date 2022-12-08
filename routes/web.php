@@ -25,3 +25,9 @@ Route::get('fetch-student', [StudentController::class, 'fetch_tudent']);
 Route::get('students', [StudentController::class, 'index']);
 // insert student data
 Route::post('students', [StudentController::class, 'store']);
+// edit student
+Route::get('edit-student/{id}', [StudentController::class, 'edit']);
+// update student
+Route::POST('update-student/{id}', [StudentController::class, 'update']);
+// delete student
+Route::delete('delete-student/{id}', [StudentController::class, 'destroy']);
